@@ -2,31 +2,33 @@ var mongoose = require("mongoose");
 var _ = require("lodash");
 
 var reminderDataSchema = new mongoose.Schema({
+    invoice_id: {
+        type: Number,
+        required: true        
+    },
     cus_name: {
         type: String,
         required: true
     },
     date_sell: {
-        type: String,
+        type: Number,
         required: true
     },
-    next_installment:{
-        type:{
-            date: String,
-            amount: String
-        },
+    num_installment: {
+        type: Number,
         required: true
     },
     total_amount: {
         type: String,
         required: true
     },
-    installments: {
-        type: Array,
-        default: [],
+    nxt_installment: {
+        type:{
+            date: Number,
+            amount: String
+        },
         required: true
-    },
-
+    }
 })
 
 var reminderDataModel = mongoose.model('Reminder', reminderDataSchema)

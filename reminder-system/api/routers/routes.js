@@ -7,6 +7,6 @@ Router.post('/addentry', controller.addEntry);
 
 Router.post('/showentry', controller.showEntry);
 
-Router.post('/todayreminders', controller.todayReminders);
+Router.get('/todayreminders', controller.todayReminders);
 
 module.exports = Router;
