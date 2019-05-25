@@ -1,30 +1,30 @@
-var express = require('express');
-var app = express();
-var mongoose = require("mongoose");
-var reminderDataModel = require('../models/reminder.js')
+const reminderDataModel = require('../models/reminder.js')
+const {error, success} = require('../helpers/messages')
 
 exports.addEntry = function (req, res) {
-    var data = req.body;
-    var nxt_installment = parseInt(data.date_sell) + 2592000000
-    var itemObj = {
-        _id: data._id,
-        cus_name: data.cus_name,
-        date_sell: data.date_sell,
-        num_installment: data.num_installment,
-        num_installment_remain: data.num_installment,
-        total_amount: data.total_amount,
+    const req_data = req.body;
+    const nxt_installment = parseInt(req_data.date_sell) + 2592000000
+    const reminder_object = {
+        _id: req_data._id,
+        cus_name: req_data.cus_name,
+        date_sell: req_data.date_sell,
+        num_installment: req_data.num_installment,
+        num_installment_remain: req_data.num_installment,
+        total_amount: req_data.total_amount,
         nxt_installment: nxt_installment
     };
-    var newReminder = new reminderDataModel(itemObj)
-    reminderDataModel.createReminder(newReminder, function(err, dbrem){
+    const newReminder = new reminderDataModel(reminder_object)
+    reminderDataModel.createReminder(newReminder, (err, reminder_info)=>{
         if (err) {
             if (err.code == 11000) {
-                res.status(200).send("User already exist");
+                res.status(200).send(error.ERROR_ID_PRESENT_ERROR+req_data._id);
+                console.log(err)
             } else {
-                res.send(err);
+                res.send(error.ERROR_ADDING_REMINDER);
+                console.log(err)
             }
         } else {
-            res.status(200).send("SignUp successfully");
+            res.send(success.SUCCESS_REMINDER_ADDED);
         }        
     });  
 };
@@ -33,43 +33,50 @@ exports.addEntry = function (req, res) {
 exports.showEntry = function (req, res) {
     reminderDataModel.showUsers(function (err, userList) {
         if (err) {
-            console.log("err :", err);
+            res.status(400).send(error.ERROR_UNABLE_GET_REMINDERS);
+            console.log(err)
         } else {
-            console.log("Device list", userList);
             res.send(userList)
         }
     });
 }
 
 exports.todayReminders = function (req, res) {
+    let reminder_res_msg = ""
     reminderDataModel.showUsers(function (err, reminderList) {
         if (err) {
-            res.status(404).send("Error in fetching the reminderList :", err);
+            res.status(404).send(error.ERROR_UNABLE_GET_REMINDERS);
+            console.log(err)
         } else if(reminderList.length == 0){
-            res.status(200).send("Reminder List is empty.");
+            res.status(200).send(success.SUCCESS_REMINDER_EMPTY);
         } 
         else {
             for(let i = 0; i < reminderList.length; i++) {
                 let currentRemainder = reminderList[i]
                 let nxtInstallmentDate = new Date(currentRemainder.nxt_installment)
-                if(new Date().toISOString().split('T')[0] == nxtInstallmentDate.toISOString().split('T')[0]) {
+                if(true || new Date().toISOString().split('T')[0] == nxtInstallmentDate.toISOString().split('T')[0]) {
                     if(currentRemainder.num_installment_remain != 0) {
                         let updatedInfo = {
                             nxt_installment: new Date(nxtInstallmentDate).getTime() + 2592000000,
                             num_installment_remain: currentRemainder.num_installment_remain - 1
                         }
+                        if(currentRemainder.num_installment_remain == 1){
+                            updatedInfo.nxt_installment = 0
+                        }
                         reminderDataModel.updateNextInstallment(reminderList[i]._id,updatedInfo, function(err,data) {
                             if (err) {
-                                res.status(400)("Error in updating the reminderList :", err);
+                                res.status(304).send(error.ERROR_UPDATE_REMINDER);
+                                console.log(err)
                             } else {
-                                res.status(200)("Reminder Updated.")
+                                console.log("---------------email send")
+                                res.status(200).send(success.SUCCESS_REMINDER_UPDATE)
                             }
                         })                        
                     } else {
-                        res.status(200)("No pending reminder in today's list.")
+                        res.status(200).send(success.SUCCESS_NO_PENDING_REMINDER)
                     }
                 } else {
-                    res.status(200)("No reminder for today.")
+                    res.status(200).send(success.SUCCESS_NO_PENDING_REMINDER)
                 }
             }
         }
