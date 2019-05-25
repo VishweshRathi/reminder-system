@@ -2,9 +2,10 @@ var mongoose = require("mongoose");
 var _ = require("lodash");
 
 var reminderDataSchema = new mongoose.Schema({
-    invoice_id: {
+    _id: {
         type: Number,
-        required: true        
+        required: true, 
+        unique: true    
     },
     cus_name: {
         type: String,
@@ -18,6 +19,10 @@ var reminderDataSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    num_installment_remain: {
+        type: Number,
+        required: true
+    },    
     total_amount: {
         type: String,
         required: true
@@ -40,6 +45,10 @@ reminderDataModel.createReminder = function (newReminder, callback) {
 reminderDataModel.showUsers = function (callback) {
     reminderDataModel.find({}, callback);
 };
+
+reminderDataModel.updateNextInstallment = function(id, updatedInfo, callback) {
+    reminderDataModel.findByIdAndUpdate(id, updatedInfo, callback)
+}
 
 
 module.exports = reminderDataModel;
