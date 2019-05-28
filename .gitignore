@@ -1,1 +1,12 @@
 reminder-system/api/node_modules
+reminder-system/gui/node_modules
+reminder-system/gui/package-lock.json
+reminder-system/gui/README.md
+
+reminder-system/gui/.DS_Store
+reminder-system/gui/.env
+reminder-system/gui/npm-debug.log*
+reminder-system/gui/yarn-debug.log*
+reminder-system/gui/yarn-error.log*
+reminder-system/gui//coverage
+reminder-system/gui//build
