@@ -51,8 +51,9 @@ exports.todayReminders = function (req, res) {
             res.status(200).send(success.SUCCESS_REMINDER_EMPTY);
         } 
         else {
-            for(let i = 0; i < reminderList.length; i++) {
-                let currentRemainder = reminderList[i]
+            var prom_arr = [];
+            reminderList.map(function(reminder) {
+                let currentRemainder = reminder
                 let nxtInstallmentDate = new Date(currentRemainder.nxt_installment)
                 if(true || new Date().toISOString().split('T')[0] == nxtInstallmentDate.toISOString().split('T')[0]) {
                     if(currentRemainder.num_installment_remain != 0) {
@@ -63,23 +64,33 @@ exports.todayReminders = function (req, res) {
                         if(currentRemainder.num_installment_remain == 1){
                             updatedInfo.nxt_installment = 0
                         }
-                        reminderDataModel.updateNextInstallment(reminderList[i]._id,updatedInfo, function(err,data) {
-                            if (err) {
-                                res.status(304).send(error.ERROR_UPDATE_REMINDER);
-                                console.log(err)
-                            } else {
-                                console.log("---------------email send")
-                                res.status(200).send(success.SUCCESS_REMINDER_UPDATE)
-                            }
-                        })                        
-                    } else {
-                        res.status(200).send(success.SUCCESS_NO_PENDING_REMINDER)
+                        
+                        prom_arr.push(new Promise(function (resolve, reject) {
+                            reminderDataModel.updateNextInstallment(reminder._id,updatedInfo, function(err,data) {
+                                if (err) {
+                                    console.log(err)
+                                    reject(error.ERROR_UPDATE_REMINDER)
+                                } else {
+                                    console.log("---------------email send")
+                                    resolve(success.SUCCESS_REMINDER_UPDATE)
+                                }
+                            })   
+                        }))                  
                     }
-                } else {
-                    res.status(200).send(success.SUCCESS_NO_PENDING_REMINDER)
-                }
+                } 
+            })
+            if(prom_arr.length > 0) {
+                Promise.all(prom_arr).then(data => {
+                    console.log("Success-------------------------------",data);
+                    res.send()
+                }).catch(err => {
+                    console.log("err-------------------------------",err);
+                })
+            } else {
+                res.send("ERRORR");
             }
         }
+        
     });
 }
 
