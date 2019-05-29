@@ -22,18 +22,14 @@ class Header extends Component {
                         <div className="navbar-collapse collapse">
                             <ul className="nav navbar-nav navbar-right">
                                 <li><Link to={'/home'}>Home</Link></li>
+                                <li><Link to={'/add_reminder'}>Add reminder</Link></li>
                                 <li className="dropdown">
-                                    <Link className="dropdown-toggle" data-toggle="dropdown" to={'/Product1'}>Product <b className="caret"></b></Link>
+                                    <Link className="dropdown-toggle" data-toggle="dropdown" to={'/home'}>Show reminder <b className="caret"></b></Link>
                                     <ul className="dropdown-menu">
-                                        <li><Link to={'/biochemistry'}>Biochemistry</Link></li>
-                                        <li><Link to={'/serology'}>Serology</Link></li>
-                                        <li><Link to={'/rapid'}>Radip</Link></li>
-                                        <li><Link to={'/monovail'}>Monovail</Link></li>
-                                        <li><Link to={'/turbi_latex'}>Turbi Latex</Link></li>
-                                        <li><Link to={'/coagulation'}>Coagulation</Link></li>
-                                        <li><Link to={'/instruments'}>Instuments</Link></li>
+                                        <li><Link to={'/today_reminder'}>Today's reminder(s)</Link></li>
+                                        <li><Link to={'/all_reminder'}>All reminders</Link></li>
                                     </ul>
-                                </li>
+                                </li>                                
                                 <li ><Link to={'/contactus'}>Contact Us</Link></li>
                             </ul>
                         </div>
