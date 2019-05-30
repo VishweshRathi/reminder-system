@@ -17,14 +17,23 @@ exports.addEntry = function (req, res) {
     reminderDataModel.createReminder(newReminder, (err, reminder_info)=>{
         if (err) {
             if (err.code == 11000) {
-                res.status(200).send(error.ERROR_ID_PRESENT_ERROR+req_data._id);
+                res.status(200).send({
+                    isError: true,
+                    msg: error.ERROR_ID_PRESENT_ERROR+req_data._id
+                });
                 console.log(err)
             } else {
-                res.send(error.ERROR_ADDING_REMINDER);
+                res.status(200).send({
+                    isError: true,
+                    msg: error.ERROR_ADDING_REMINDER
+                });
                 console.log(err)
             }
         } else {
-            res.send(success.SUCCESS_REMINDER_ADDED);
+            res.status(200).send({
+                isError: false,
+                msg: success.SUCCESS_REMINDER_ADDED
+            }); 
         }        
     });  
 };
