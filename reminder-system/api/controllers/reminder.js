@@ -1,5 +1,6 @@
 const reminderDataModel = require('../models/reminder.js')
 const {error, success} = require('../helpers/messages')
+var nodemailer = require('nodemailer');
 
 exports.addEntry = function (req, res) {
     const req_data = req.body;
@@ -47,7 +48,7 @@ exports.showEntry = function (req, res) {
                 msg: error.ERROR_UNABLE_GET_REMINDERS
             });
             console.log(err)
-        }else if(userList.length == 0){
+        }else if(userList.length == 0)  {
             res.status(200).send({
                 isError: true,
                 data: error.ERROR_NO_REMINDER_FOUND
@@ -63,15 +64,20 @@ exports.showEntry = function (req, res) {
 }
 
 exports.todayReminders = function (req, res) {
-    let reminder_res_msg = ""
     reminderDataModel.showUsers(function (err, reminderList) {
         if (err) {
-            res.status(404).send(error.ERROR_UNABLE_GET_REMINDERS);
-            console.log(err)
+            res.status(200).send({
+                isError: true,
+                data: error.ERROR_UNABLE_GET_REMINDERS
+            });
         } else if(reminderList.length == 0){
-            res.status(200).send(success.SUCCESS_REMINDER_EMPTY);
+            res.status(200).send({
+                isError: true,
+                data: success.SUCCESS_REMINDER_EMPTY
+            });
         } 
         else {
+            let email_content = []
             var prom_arr = [];
             reminderList.map(function(reminder) {
                 let currentRemainder = reminder
@@ -82,18 +88,23 @@ exports.todayReminders = function (req, res) {
                             nxt_installment: new Date(nxtInstallmentDate).getTime() + 2592000000,
                             num_installment_remain: currentRemainder.num_installment_remain - 1
                         }
-                        if(currentRemainder.num_installment_remain == 1){
+                        if(currentRemainder.num_installment_remain == 1) {
                             updatedInfo.nxt_installment = 0
                         }
-                        
                         prom_arr.push(new Promise(function (resolve, reject) {
                             reminderDataModel.updateNextInstallment(reminder._id,updatedInfo, function(err,data) {
                                 if (err) {
                                     console.log(err)
-                                    reject(error.ERROR_UPDATE_REMINDER)
+                                    reject({
+                                        isError: true,
+                                        data: error.ERROR_UPDATE_REMINDER
+                                    })
                                 } else {
-                                    console.log("---------------email send")
-                                    resolve(success.SUCCESS_REMINDER_UPDATE)
+                                    email_content.push(currentRemainder)
+                                    resolve({
+                                        isError: false,
+                                        data: success.SUCCESS_REMINDER_UPDATE
+                                    })
                                 }
                             })   
                         }))                  
@@ -101,17 +112,38 @@ exports.todayReminders = function (req, res) {
                 } 
             })
             if(prom_arr.length > 0) {
-                Promise.all(prom_arr).then(data => {
-                    console.log("Success-------------------------------",data);
-                    res.send()
+                Promise.all(prom_arr).then(promiseData => {
+                    sendMailAPI(email_content, function(info) {
+                        if(info.isError) {
+                            res.status(200).send({
+                                isError: true,
+                                data: info.data
+                            });  
+                        } else if(promiseData.isError){
+                            res.status(200).send({
+                                isError: true,
+                                data: promiseData[0].data
+                            });  
+                        } else {
+                            res.status(200).send({
+                                isError: false,
+                                data: promiseData[0].data + " && " + info.data
+                            });                             
+                        }
+                    })
                 }).catch(err => {
-                    console.log("err-------------------------------",err);
+                    res.status(200).send({
+                        isError: true,
+                        data: err
+                    });
                 })
             } else {
-                res.send("ERRORR");
+                res.status(200).send({
+                    isError: true,
+                    data: "No reminder available or problem in sending Email"
+                });
             }
         }
-        
     });
 }
 
@@ -124,11 +156,70 @@ exports.deleteEntry = function (req, res) {
                 msg: error.ERROR_UNABLE_TO_DELETE
             });
             console.log(err)
-        }else {
+        } else {
             res.status(200).send({
                 isError: false,
                 msg: success.SUCCESS_DELETE
             });            
         }
     })
+}
+
+
+sendMailAPI = (informationArray, callback) => {
+    var operation_status
+    getHtmlEmail = (information) => {
+        let date_sold = new Date(information.date_sell);
+        let std_date_sold = date_sold.getDate() + '/' + (date_sold.getMonth()+1) + '/' + date_sold.getFullYear()
+        return (
+            `<div>
+                <p>Bill Id: ${information._id}</p> 
+                <p>Name: ${information.cus_name}</p> 
+                <p>Sold date: ${std_date_sold}</p>
+                <p>Total Installment: ${information.num_installment}</p>
+                <p>Amount: ${information.total_amount}</p> 
+                <p>Current Installment Id: ${information.num_installment_remain}</p> 
+                <p>--------------------------------------------------------</p>
+            </div> `
+        )
+    }
+
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+        user: 'noreplydiagno@gmail.com',
+        pass: 'vishwesh!@#'
+        }
+    });
+
+    var mailOptions = {
+        from: 'noreplydiagno@gmail.com',
+        to: 'noreplydiagno@gmail.com',
+        subject: "Reminder Information",
+        html: 
+        `<div> 
+            <h1>Hi there,</h1> 
+            <h3>Please find the details below of today's reminder</h3> 
+            <div>
+                ${informationArray.map(information => {
+                  return getHtmlEmail(information)
+                })}
+                <p>Note: Kindly do not replay to this email :)</p> 
+                <p style="font-weight:bold; font-size:1.3em">- Team Diagnocare </p> 
+            </div> 
+        </div>`
+    };
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            callback({
+                isError: true,
+                data: "Problem in sending Email."
+            })
+        } else {
+            callback({
+                isError: false,
+                data: "Email send successfully."
+            })
+        }
+    });
 }

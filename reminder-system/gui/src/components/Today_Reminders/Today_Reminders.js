@@ -17,9 +17,9 @@ class TodayReminder extends Component {
 
     todayReminders = () =>{
         axios.get('http://localhost:3001/todayReminders').then(res=>{
-            alert(res)
+            alert(res.data.data)
         }).catch(err=>{
-            alert(err.data)
+            alert(err.data.data)
         })
     }
 
@@ -28,7 +28,7 @@ class TodayReminder extends Component {
             <Aux>
                 <div style={{textAlign: "center", margin: "5em"}}>
                     <p style={{marginBottom:"2em",fontWeight: "bold", fontSize: "1.4em"}}>Please press the below button to send Email.</p>
-                    <button style={{width: "10%"}} onClick={this.todayReminders} type="button" class="btn btn-success">Success</button>
+                    <button style={{width: "10%"}} onClick={this.todayReminders} type="button" className="btn btn-success">Success</button>
                 </div>
             </Aux >
         );

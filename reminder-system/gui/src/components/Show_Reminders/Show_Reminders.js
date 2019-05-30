@@ -28,7 +28,7 @@ class ShowReminders extends Component {
     }
 
     deleteReminder = (_id, num_installment_remain) => {
-        if(num_installment_remain != 0) {
+        if(num_installment_remain !== 0) {
             alert("Installments are remaning, Can't delete reminder.")
             return
         }
@@ -47,7 +47,7 @@ class ShowReminders extends Component {
             let date_sell = new Date(reminder.date_sell);
             let std_date_sell = date_sell.getDate() + '/' + (date_sell.getMonth()+1) + '/' + date_sell.getFullYear()
             let date_nxt_installment = new Date(reminder.nxt_installment);
-            let std_date_nxt_installment = reminder.nxt_installment == 0 ? "Not Applicable" : date_nxt_installment.getDate() + '/' + (date_nxt_installment.getMonth()+1) + '/' + date_nxt_installment.getFullYear()
+            let std_date_nxt_installment = reminder.nxt_installment === 0 ? "Not Applicable" : date_nxt_installment.getDate() + '/' + (date_nxt_installment.getMonth()+1) + '/' + date_nxt_installment.getFullYear()
             return(
             <tr key={reminder._id} style={{textAlign: "center"}}>
                 <td>{reminder._id}</td>
@@ -57,7 +57,7 @@ class ShowReminders extends Component {
                 <td>{reminder.num_installment_remain}</td>
                 <td>{reminder.total_amount}</td>
                 <td>{std_date_nxt_installment}</td>
-                <td>{reminder.num_installment_remain == 0 && <i onClick={() => this.deleteReminder(reminder._id, reminder.num_installment_remain)} className="fa fa-trash"></i>}</td>
+                <td>{reminder.num_installment_remain === 0 && <i onClick={() => this.deleteReminder(reminder._id, reminder.num_installment_remain)} className="fa fa-trash"></i>}</td>
             </tr>
             )
         })
