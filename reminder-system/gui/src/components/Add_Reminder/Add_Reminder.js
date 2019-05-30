@@ -69,7 +69,7 @@ class AddReminder extends Component {
                             <label htmlFor="tot_amount">Total amount</label>
                             <input type="number" className="form-control" id="tot_amount" value={this.state.total_amount} placeholder="Enter total amount" name="total_amount" onChange={event => this.handleChange(event)}/>
                         </div>   
-                        <div style={{textAlign: "right"}}>                                             
+                        <div style={{textAlign: "right", marginTop: "1em"}}>                                             
                             <button onClick={this.resetFields} style={{width: "20%"}} type="button" className="btn btn-danger">Reset</button>
                             <button onClick={this.postDataHandler} style={{marginLeft: "2%", width: "20%"}} type="button" className="btn btn-success">Submit</button>                            
                         </div>

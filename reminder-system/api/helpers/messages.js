@@ -9,7 +9,8 @@ const error = {
     ERROR_ID_PRESENT_ERROR: "Reminder already exist for id: ",
     ERROR_ADDING_REMINDER: "Error while adding reminder.",
     ERROR_UNABLE_GET_REMINDERS: "Unable to get Reminder list.",
-    ERROR_UPDATE_REMINDER: "Error in updating the reminderList"
+    ERROR_UPDATE_REMINDER: "Error in updating the reminderList",
+    ERROR_NO_REMINDER_FOUND: "Sorry! No reminder(s) found."
 }
 
 module.exports.error = error

@@ -42,10 +42,22 @@ exports.addEntry = function (req, res) {
 exports.showEntry = function (req, res) {
     reminderDataModel.showUsers(function (err, userList) {
         if (err) {
-            res.status(400).send(error.ERROR_UNABLE_GET_REMINDERS);
+            res.status(200).send({
+                isError: true,
+                msg: error.ERROR_UNABLE_GET_REMINDERS
+            });
             console.log(err)
-        } else {
-            res.send(userList)
+        }else if(userList.length == 0){
+            res.status(200).send({
+                isError: true,
+                data: error.ERROR_NO_REMINDER_FOUND
+            });
+        } 
+        else {
+            res.status(200).send({
+                isError: false,
+                data: userList
+            });            
         }
     });
 }

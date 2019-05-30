@@ -9,7 +9,7 @@ class Layout extends Component {
         return (
             <Aux>
                 <Header/>
-                <main>
+                <main style={{margin: "2em 0 10em"}}>
                     {this.props.children}
                 </main>
                 <Footer/>

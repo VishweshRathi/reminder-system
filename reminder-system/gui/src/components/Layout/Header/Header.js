@@ -22,14 +22,8 @@ class Header extends Component {
                         <div className="navbar-collapse collapse">
                             <ul className="nav navbar-nav navbar-right">
                                 <li><Link to={'/home'}>Home</Link></li>
-                                <li><Link to={'/add_reminder'}>Add reminder</Link></li>
-                                <li className="dropdown">
-                                    <Link className="dropdown-toggle" data-toggle="dropdown" to={'/home'}>Show reminder <b className="caret"></b></Link>
-                                    <ul className="dropdown-menu">
-                                        <li><Link to={'/today_reminder'}>Today's reminder(s)</Link></li>
-                                        <li><Link to={'/all_reminder'}>All reminders</Link></li>
-                                    </ul>
-                                </li>                                
+                                <li><Link to={'/add_reminder'}>Add reminder</Link></li>                            
+                                <li><Link to={'/show_reminder'}>Show reminders</Link></li>                            
                                 <li ><Link to={'/contactus'}>Contact Us</Link></li>
                             </ul>
                         </div>

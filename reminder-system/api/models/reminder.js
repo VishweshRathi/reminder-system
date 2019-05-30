@@ -43,7 +43,7 @@ reminderDataModel.createReminder = function (newReminder, callback) {
 };
 
 reminderDataModel.showUsers = function (callback) {
-    reminderDataModel.find({}, callback);
+    reminderDataModel.find({}, callback).sort({nxt_installment: 1});
 };
 
 reminderDataModel.updateNextInstallment = function(id, updatedInfo, callback) {
