@@ -24,6 +24,7 @@ class Header extends Component {
                                 <li><Link to={'/home'}>Home</Link></li>
                                 <li><Link to={'/add_reminder'}>Add reminder</Link></li>                            
                                 <li><Link to={'/show_reminder'}>Show reminders</Link></li>                            
+                                <li><Link to={'/today_reminders'}>Today's Reminder</Link></li>                            
                                 <li ><Link to={'/contactus'}>Contact Us</Link></li>
                             </ul>
                         </div>

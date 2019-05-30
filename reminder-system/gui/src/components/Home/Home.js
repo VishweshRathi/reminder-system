@@ -5,7 +5,9 @@ class Home extends Component {
     render() {
         return (
             <Aux>
-                REACT APP
+                <div>
+                    Welcome!!!
+                </div>
             </Aux >
         );
     };

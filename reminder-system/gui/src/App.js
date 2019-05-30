@@ -5,6 +5,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import Home from './components/Home/Home'
 import AddReminder from './components/Add_Reminder/Add_Reminder';
 import ShowReminders from './components/Show_Reminders/Show_Reminders';
+import TodayReminders from './components/Today_Reminders/Today_Reminders';
 
 class App extends Component {
   render() {
@@ -16,6 +17,7 @@ class App extends Component {
               <Route path= "/home" component={Home} />
               <Route path= "/add_reminder" component={AddReminder} />
               <Route path= "/show_reminder" component={ShowReminders} />
+              <Route path= "/today_reminders" component={TodayReminders} />
             </Switch>
           </Layout>
         </BrowserRouter>

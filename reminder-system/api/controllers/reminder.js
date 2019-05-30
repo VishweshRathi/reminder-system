@@ -115,6 +115,20 @@ exports.todayReminders = function (req, res) {
     });
 }
 
-
-
-
+exports.deleteEntry = function (req, res) {
+    let _id = req.body._id
+    reminderDataModel.findByIdAndRemove(req.body._id, function(err, data) {
+        if (err || !data) {
+            res.status(200).send({
+                isError: true,
+                msg: error.ERROR_UNABLE_TO_DELETE
+            });
+            console.log(err)
+        }else {
+            res.status(200).send({
+                isError: false,
+                msg: success.SUCCESS_DELETE
+            });            
+        }
+    })
+}
