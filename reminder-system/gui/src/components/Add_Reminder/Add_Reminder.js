@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Aux from '../../hoc/Aux'
 import axios from 'axios'
 // import class from './Add_Reminder.css'
-
+import Spinner from '../Spinner/Spinner'
 class AddReminder extends Component {
     constructor(props) {
         super(props);
@@ -11,19 +11,23 @@ class AddReminder extends Component {
             cus_name: "",
             date_sell: "",
             num_installment: "",
-            total_amount: ""
+            total_amount: "",
+            loading: false
         };
     }
 
     postDataHandler = () =>{
+        this.setState({loading: true})
         const {_id, cus_name, date_sell, num_installment, total_amount} = this.state
         let date_in_epoch = new Date(date_sell).getTime();
         const post = {_id, cus_name, date_sell: date_in_epoch, num_installment, total_amount}
         axios.post('http://localhost:3001/addEntry',post).then(res=>{
+            this.setState({loading: false})
             alert(res.data.msg)
             if(!res.data.isError)
                 this.resetFields()
         }).catch(err=>{
+            this.setState({loading: false})
             alert(err.data)
         })
     }
@@ -45,6 +49,7 @@ class AddReminder extends Component {
     render() {
         return (
             <Aux>
+                {this.state.loading ? <Spinner/> : null}
                 <div className="col-md-4"></div>
                 <div className="container col-md-4">
                     <h2 style={{marginBottom: "1em"}}>Add Reminder</h2>

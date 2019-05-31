@@ -2,24 +2,28 @@ import React, { Component } from 'react';
 import Aux from '../../hoc/Aux'
 import axios from 'axios'
 // import class from './Show_Reminder.css'
-
+import Spinner from '../Spinner/Spinner'
 class ShowReminders extends Component {
     constructor(props) {
         super(props);
         this.state = {
             reminderList: [],
-            error_info: {}
+            error_info: {},
+            loading: false
         };
     }
 
     getReminders = () => {
+        this.setState({loading: true})
         axios.get('http://localhost:3001/showEntry').then(res=>{
+            this.setState({loading: false})
             if(!res.data.isError)
                 this.setState({reminderList: res.data.data})
             else 
                 this.setState({error_info: res.data})
         }).catch(err=>{
-            alert(err.data)
+            this.setState({loading: false})
+            // alert(err.data)
         })
     }
 
@@ -69,6 +73,7 @@ class ShowReminders extends Component {
         if (reminderList.length === 0) return null;
         return(
         <Aux>
+            {this.state.loading ? <Spinner/> : null}
             <div className="container">
                 <h2>Reminder List</h2>
                 <div className="table-responsive" style={{margin: "3em 0 7em"}}>          
