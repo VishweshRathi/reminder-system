@@ -1,6 +1,7 @@
 const reminderDataModel = require('../models/reminder.js')
 const {error, success} = require('../helpers/messages')
 var nodemailer = require('nodemailer');
+const config = require(`../config/config`);
 
 exports.addEntry = function (req, res) {
     const req_data = req.body;
@@ -187,14 +188,14 @@ sendMailAPI = (informationArray, callback) => {
     var transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-        user: 'noreplydiagno@gmail.com',
-        pass: 'vishwesh!@#'
+        user: config.sendMailServer.user_id,
+        pass: config.sendMailServer.password
         }
     });
 
     var mailOptions = {
-        from: 'noreplydiagno@gmail.com',
-        to: 'noreplydiagno@gmail.com',
+        from: config.sendMailServer.user_id,
+        to: config.receiveMailServer.user_id,
         subject: "Reminder Information",
         html: 
         `<div> 

@@ -1,9 +1,9 @@
 const express = require('express');
-
+const config = require(`./config/config`);
 const app = express();
 var mongoose = require('mongoose')
 var bodyParser = require('body-parser');
-mongoose.connect("mongodb://localhost:27017/reminderSystem");
+mongoose.connect(config.dbURL);
 
 app.use(bodyParser.json({limit: '50mb'})); // support json encoded bodies
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true })); // support encoded bodies
@@ -20,7 +20,7 @@ app.use(function(req, res, next) {
 
 app.use('/', routes);
 
-const port =  3001
+const port = config.dev.port
 app.listen(port,()=>{
     console.log("Sever Started on port: "+port);
 })
